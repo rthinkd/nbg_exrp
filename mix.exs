@@ -24,7 +24,8 @@ defmodule NbgExrp.MixProject do
     [
       {:jason, "~> 1.2"},
       {:httpoison, "~> 1.8"},
-      {:decimal, "~> 2.0"}
+      {:decimal, "~> 2.0"},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 
