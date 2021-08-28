@@ -1,4 +1,6 @@
 defmodule NbgExrp.CurrencyParser do
+  alias NbgExrp.FileStorage
+
   @nbg_resource "https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json"
 
   def parse(currencies) do
@@ -15,17 +17,24 @@ defmodule NbgExrp.CurrencyParser do
   end
 
   def fetch_currencies do
-    case HTTPoison.get(@nbg_resource) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Jason.decode!(body)
+    case FileStorage.read() do
+      {:ok, file} ->
+	Jason.decode!(file)
 
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts("Not found :(")
-        System.halt(0)
+      {:error, _} ->
+	case HTTPoison.get(@nbg_resource) do
+	  {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+	    FileStorage.store(body)
+	    Jason.decode!(body)
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
-        System.halt(0)
+	  {:ok, %HTTPoison.Response{status_code: 404}} ->
+	    IO.puts("Not found :(")
+	    System.halt(0)
+
+	  {:error, %HTTPoison.Error{reason: reason}} ->
+	    IO.inspect(reason)
+	    System.halt(0)
+	end
     end
   end
 
