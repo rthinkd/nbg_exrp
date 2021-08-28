@@ -42,6 +42,10 @@ defmodule NbgExrp.CLI do
       Desc: Show current rate for USD
       Usage: nbg_exrp -r usd, nbg_exrp --rate usd
 
+    --all
+      Desc: Shoo all currencies rates
+      Usage: nbg_exp --all
+
     -c, --convert
      Desc: Convert amount in currenty to GEL
      Usage: nbg_exrp -c 10 usd, nbg_exrp --conver 10 usd
