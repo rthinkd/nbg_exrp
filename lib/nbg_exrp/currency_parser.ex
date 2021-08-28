@@ -17,15 +17,15 @@ defmodule NbgExrp.CurrencyParser do
   def fetch_currencies do
     case HTTPoison.get(@nbg_resource) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-	Jason.decode!(body)
+        Jason.decode!(body)
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-	IO.puts("Not found :(")
-	System.halt(0)
+        IO.puts("Not found :(")
+        System.halt(0)
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-	IO.inspect(reason)
-	System.halt(0)
+        IO.inspect(reason)
+        System.halt(0)
     end
   end
 
@@ -34,8 +34,16 @@ defmodule NbgExrp.CurrencyParser do
 
     Map.fetch(crecords, "currencies")
     |> elem(1)
-    |> Enum.filter(fn rec -> Enum.member?(normalized_currencies, rec["code"]) end)
+    |> Enum.filter(fn rec -> is_member?(normalized_currencies, rec["code"]) end)
     |> validate
+  end
+
+  def is_member?([head | tail], code) do
+    Enum.member?([head | tail], code)
+  end
+
+  def is_member?([], _) do
+    true
   end
 
   def validate([a | b]) do

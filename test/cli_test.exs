@@ -49,6 +49,14 @@ defmodule CLITest do
         assert rec[:amount] == 10
       end
     end
+
+    test "--all returns all currencies" do
+      with_mock HTTPoison, get: fn _url -> response() end do
+        {:rate_all, crecords} = CLI.fetch_and_process(["--all"])
+
+        assert length(crecords) == 3
+      end
+    end
   end
 
   defp response do
@@ -76,6 +84,17 @@ defmodule CLITest do
             "quantity" => 1,
             "rate" => 3.1288,
             "rateFormated" => "3.1288",
+            "validFromDate" => "2021-08-27T00:00:00.000Z"
+          },
+          %{
+            "code" => "RUB",
+            "date" => "2021-08-26T17:45:03.649Z",
+            "diff" => -0.0010,
+            "diffFormated" => "0.0010",
+            "name" => "რუსული რუბლი",
+            "quantity" => 1,
+            "rate" => 0.4531,
+            "rateFormated" => "0.4531",
             "validFromDate" => "2021-08-27T00:00:00.000Z"
           }
         ]

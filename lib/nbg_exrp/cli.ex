@@ -17,7 +17,7 @@ defmodule NbgExrp.CLI do
 
   def parse_args(argv) do
     OptionParser.parse(argv,
-      strict: [help: :boolean, rate: :string, convert: :string],
+      strict: [help: :boolean, rate: :string, convert: :string, all: :boolean],
       aliases: [h: :help, r: :rate, c: :convert]
     )
     |> parse_flag()
@@ -56,6 +56,12 @@ defmodule NbgExrp.CLI do
     {:rate, records}
   end
 
+  def process({:all, _, _}) do
+    records = CurrencyParser.parse([])
+
+    {:rate_all, records}
+  end
+
   def process({:convert, amount, currency}) do
     total = currency |> CurrencyParser.parse_and_calculate(amount)
 
@@ -73,6 +79,13 @@ defmodule NbgExrp.CLI do
     records
     |> Enum.each(fn rec ->
       IO.puts("#{rec[:amount]} #{rec[:currency]} = #{rec[:total]} #{@default_currency}")
+    end)
+  end
+
+  def format_output({:rate_all, records}) do
+    records
+    |> Enum.each(fn rec ->
+      IO.puts("1 #{@default_currency} = #{rec["rate"]} #{rec["code"]} (#{rec["name"]})")
     end)
   end
 end
